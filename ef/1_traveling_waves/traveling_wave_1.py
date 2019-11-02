@@ -39,7 +39,7 @@ v    = lambda ε_eq, μ_eq:    (1/np.sqrt(ε_eq*μ_eq))             # signal vel
 ### ******************
 
 E_0   = 6       # [V]
-f     = 1e9     # [Hz]
+f     = 1.8e9     # [Hz]
 
 ε_r_1 = 1
 ε_r_2 = 3
@@ -63,7 +63,7 @@ T = 1/f     # [s]
 material_type = 'Good conductor' if σ/(ω*ε_0*ε_r_2)  >= 100                           else \
                 'dielectric'     if σ/(ω*ε_0*ε_r_2) < 100 and σ/(ω*ε_0*ε_r_2 >= 0.01) else \
                 'Insulator'
-print(f"σ/(ω*ε_0*ε_r_2) = {σ/(ω*ε_0*ε_r_2)}  ==> \033[92m{material_type}\x1b[0m")
+print(f"σ/(ω*ε_0*ε_r_2) = {σ/(ω*ε_0*ε_r_2):.4g}  ==> \033[92m{material_type}\x1b[0m")
 
 
 ε_eq_1 = ε_0 * ε_r_1
@@ -83,34 +83,34 @@ k_2 = k(μ_eq_2, ε_eq_2)
 τ_e = 1 + Γ_e
 
 
-if material_type == 'conductor':
+if material_type == 'Good conductor':
     print("*"*3)
     print("\tapprox results (good conductor material):")
     δ = np.sqrt(2/(ω*μ_eq_2*σ))
     k_2 = (1/δ)*(1-1j)
     ζ_2 = (1/(σ*δ))*(1+1j)
-    print(f"\tdelta = {δ}")
-    print(f"\tk_2 = {(1/δ)}·(1-j)")
-    print(f"\tζ_2 = {(1/(σ*δ))}·(1+j)")
+    print(f"\tdelta = {δ:.4g}")
+    print(f"\tk_2 = {(1/δ):.4g}·(1-j)")
+    print(f"\tζ_2 = {(1/(σ*δ)):.4g}·(1+j)")
     print("*"*3)
 
 β =  k_2.real  # 
 α = -k_2.imag  # damping coefficient   # k := β - j*α
 
 
-print(f"μ_eq_1 = {μ_eq_1}")
-print(f"μ_eq_2 = {μ_eq_2}")
-print(f"ε_eq_1 = {ε_eq_1}")
-print(f"ε_eq_2 = {ε_eq_2}")
+print(f"μ_eq_1 = {μ_eq_1:.4g}")
+print(f"μ_eq_2 = {μ_eq_2:.4g}")
+print(f"ε_eq_1 = {ε_eq_1:.4g}")
+print(f"ε_eq_2 = {ε_eq_2:.4g}")
 
-print(f"ζ_1 = {ζ_1}")
-print(f"ζ_2 = {ζ_2}")
+print(f"ζ_1 = {ζ_1:.4g}")
+print(f"ζ_2 = {ζ_2:.4g}")
 
-print(f"k_1 = {k_1}")
-print(f"k_2 = {k_2}")
+print(f"k_1 = {k_1:.4g}")
+print(f"k_2 = {k_2:.4g}")
 
-print(f"Γ_e = {abs(Γ_e)} ∠ {np.angle(Γ_e)}")
-print(f"τ_e = {abs(τ_e)} ∠ {np.angle(τ_e)}")
+print(f"Γ_e = {abs(Γ_e):.4g} ∠ {np.angle(Γ_e):.4g}")
+print(f"τ_e = {abs(τ_e):.4g} ∠ {np.angle(τ_e):.4g}")
 
 # 
 # breakpoint()
@@ -122,7 +122,7 @@ d_neg = -3*λ(f, ε_eq_1, μ_eq_1)
 try:
     # δ is technically defined only if the material is a good conductor.
     δ = np.sqrt(2/(ω*μ_eq_2*σ))
-    print(f"~delta~ = {δ}")
+    print(f"~delta~ = {δ:.4g}")
     d_pos = 5*δ + 0.1 * -d_neg/3  # 5 delta + 10 % λ_1
 except RuntimeWarning:
     pass
@@ -149,8 +149,8 @@ e1_tot = lambda z, t: (e1_i(z,t) + e1_r(z, t)) * (0.5 * (np.sign(-z) +1))
 S_i = 0.5 * 1/ζ_1 * abs(E_0)**2
 S_t = S_i * (1-(abs(Γ_e))**2)
 
-print(f"S_i = {S_i}")
-print(f"S_t = {S_t}")
+print(f"S_i = {S_i:.4g}")
+print(f"S_t = {S_t:.4g} = {100*S_t/S_i:.4g}% S_i")
 
 
 E_max_over_E_min = lambda E_max, E_min : E_max/E_min
@@ -161,8 +161,8 @@ E_max_2 = max(e2_t(0, t))
 E_min_2 = min(abs(e2_t(0, t)))
 
 
-print(f"E_max_over_E_min_1 = {E_max_1}/{E_min_1} = {E_max_over_E_min(E_max_1, E_min_1)}")
-print(f"E_max_over_E_min_2 = {E_max_2}/{E_min_2} = {E_max_over_E_min(E_max_2, E_min_2)}")
+print(f"E_max_over_E_min_1 = {E_max_1:.4g}/{E_min_1:.4g} = {E_max_over_E_min(E_max_1, E_min_1):.4g}")
+print(f"E_max_over_E_min_2 = {E_max_2:.4g}/{E_min_2:.4g} = {E_max_over_E_min(E_max_2, E_min_2):.4g}")
 
 
 # exit(0)     #### comment this out to just show the results and avoid plotting
