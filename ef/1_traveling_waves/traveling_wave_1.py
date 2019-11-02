@@ -8,7 +8,6 @@
 # 
 # ==========================================================
 
-
 import numpy as np
 from matplotlib import pyplot as plt
 import matplotlib.animation as animation
@@ -17,7 +16,7 @@ import scipy.constants
 ### ******************
 ###     constants
 ### ******************
-#ζ_0 = scipy.constants.physical_constants['characteristic impedance of vacuum'][0]
+# ζ_0 = scipy.constants.physical_constants['characteristic impedance of vacuum'][0]
 π = np.pi
 ε_0 = scipy.constants.epsilon_0
 
@@ -25,28 +24,26 @@ import scipy.constants
 ###     functions
 ### ******************
 
+ζ    = lambda ε_eq, μ_eq:    np.sqrt(μ_eq/ε_eq)
+μ_eq = lambda μ_r:           scipy.constants.mu_0 * μ_r
+ε_eq = lambda ε_r, ω, σ:     ε_0 * ε_r * (1 - 1j*σ/(ω*ε_0))
+k    = lambda μ_eq, ε_eq:    ω * np.sqrt(μ_eq * ε_eq)
 
-ζ    = lambda ε_eq, μ_eq:       np.sqrt(μ_eq/ε_eq)
-μ_eq = lambda μ_r:              scipy.constants.mu_0 * μ_r
-ε_eq = lambda ε_r, ω, σ:        ε_0 * ε_r * (1 - 1j*σ/(ω*ε_0))
-k    = lambda μ_eq, ε_eq:       ω * np.sqrt(μ_eq * ε_eq)
-λ    = lambda f, ε_eq, μ_eq:    (1/np.sqrt(ε_eq*μ_eq))/f
-
+λ    = lambda f, ε_eq, μ_eq: (1/np.sqrt(ε_eq*μ_eq))/f
+v    = lambda ε_eq, μ_eq:    (1/np.sqrt(ε_eq*μ_eq))
 
 ### ******************
 ###     data
 ### ******************
 
 E_0   = 6       # [V]
-f     = 1e9   # [Hz]
+f     = 1e9     # [Hz]
 
 ε_r_1 = 1
 ε_r_2 = 3
 μ_r_1 = 1
 μ_r_2 = 1
-σ     = 0.0012      # [S/m]
-
-
+σ     = 0.0012  # [S/m]
 
 ### ******************
 ###    relations
@@ -54,6 +51,7 @@ f     = 1e9   # [Hz]
 
 ω = 2*π*f   # [rad/s]
 T = 1/f     # [s]
+
 
 
 ### ******************
@@ -94,9 +92,8 @@ if material_type == 'conductor':
     print(f"\tζ_2 = {(1/(σ*δ))}·(1+j)")
     print("*"*3)
 
-### unused
-# β =  k_2.real
-# α = -k_2.imag  # damping coefficient
+β =  k_2.real  # 
+α = -k_2.imag  # damping coefficient
 
 
 print(f"μ_eq_1 = {μ_eq_1}")
@@ -130,9 +127,12 @@ d_pos = d_pos.real
 
 
 
-t     = np.linspace(0, 4*T, 200)
-z_neg = np.linspace(d_neg, 0, 200, endpoint=False)
-z_pos = np.linspace(0, d_pos, 200, endpoint=False)
+λ_1   = λ(f, ε_eq_1, μ_eq_1)
+v_1   = v(ε_eq_1, μ_eq_1)
+
+t     = np.linspace(0, 2*λ_1/v_1, 80)
+z_neg = np.linspace(d_neg, 0, 400, endpoint=False)
+z_pos = np.linspace(0, d_pos, 400, endpoint=False)
 z     = z_neg + z_pos
 
 e1_i   = lambda z, t: (      E_0 * np.exp(-1j*k_1*z) * np.exp(1j*ω*t)).real * (0.5 * (np.sign(-z) +1))
@@ -161,34 +161,40 @@ print(f"E_max_over_E_min_2 = {E_max_2}/{E_min_2} = {E_max_over_E_min(E_max_2, E_
 
 
 # exit(0)     #### comment this out to just show the results and avoid plotting
+# breakpoint()
 
 
-
-fig = plt.figure()
-fig.set_dpi(100)
-ax1 = fig.add_subplot(1,1,1)
-
-
-def animate(i):
-    ax1.clear()
-    plt.title("Traveling wave, interface @ z = 0" + \
-        "\nmedium 1: z<0, $\epsilon_r$=" + str(ε_r_1)+", $\mu_r$="+str(μ_r_1) + \
-        "\nmedium 2: z>0, $\epsilon_r$=" + str(ε_r_2)+ ", $\mu_r$=" + str(μ_r_2) + ", $\sigma$ =" + str(σ)
-    )
-    plt.plot(z_neg, e1_i(z_neg, t[i]),  color='blue',   label='$e_1^i(t)$',    linewidth=1.0)
-    plt.plot(z_neg, e1_r(z_neg, t[i]),  color='red',    label='$e_1^r(t)$',    linewidth=1.0)
-    plt.plot(z_neg, e1_tot(z_neg, t[i]),color='green',  label='$e_1^{tot}(t)$',linewidth=1.0)
-    plt.plot(z_pos, e2_t(z_pos, t[i]),  color='orange', label='$e_2^t(t)$',    linewidth=1.0)
-    plt.xlabel('time (s)')
-    plt.ylabel('E [V/m]')
-    plt.legend(loc='upper right')
-    plt.grid(True)
-    # plt.ylim([-max(e1_tot(z,t))-1, max(e1_tot(z,t))+1])
-    e1_max_swing = 2*E_0 #max(abs(e1_i(z,0)) + abs(e1_r(z,0)))
-    plt.ylim([-e1_max_swing, e1_max_swing])
-    # plt.xlim([d_neg, d_pos])
+if __name__ == '__main__':
+        
+    fig = plt.figure(1)
+    fig.set_dpi(100)
 
 
-anim = animation.FuncAnimation(fig, animate, frames=60, interval=20)
-plt.show()
+    def animate(i):
+        plt.clf()
+        plt.title("Traveling wave, interface @ z = 0" + \
+            "\nmedium 1: z<0, $\epsilon_r$=" + str(ε_r_1)+", $\mu_r$="+str(μ_r_1) + \
+            "\nmedium 2: z>0, $\epsilon_r$=" + str(ε_r_2)+ ", $\mu_r$=" + str(μ_r_2) + ", $\sigma$ =" + str(σ)
+        )
+        plt.plot(z_neg, e1_i(z_neg, t[i]),  color='blue',   label='$e_1^i(z,t)|_{z=z_0}$',    linewidth=1.0)
+        plt.plot(z_neg, e1_r(z_neg, t[i]),  color='red',    label='$e_1^r(z,t)|_{z=z_0}$',    linewidth=1.0)
+        plt.plot(z_neg, e1_tot(z_neg, t[i]),color='green',  label='$e_1^{tot}(z,t)|_{z=z_0}$',linewidth=1.0)
+        plt.plot(z_pos, e2_t(z_pos, t[i]),  color='orange', label='$e_2^t(z,t)|_{z=z_0}$',    linewidth=1.0)
+        plt.xlabel('space (z)')
+        plt.ylabel('E [V/m]')
+        plt.legend(loc='upper right')
+        plt.grid(True)
+        e1_max_swing = 2*E_0 #max(abs(e1_i(z,0)) + abs(e1_r(z,0)))
+        plt.ylim([-e1_max_swing, e1_max_swing])
+        plt.xlim([d_neg, d_pos])
+
+
+    anim = animation.FuncAnimation(fig, animate, frames=60, interval=20)
+    plt.show()
+
+    ### Save animation
+    # Writer = animation.writers['ffmpeg']
+    # writer = Writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
+    # anim.save('media/traveling_wave_1.mp4', writer=writer, dpi=200)
+
 
