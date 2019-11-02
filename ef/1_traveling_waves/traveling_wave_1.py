@@ -24,13 +24,15 @@ import scipy.constants
 ###     functions
 ### ******************
 
-ζ    = lambda ε_eq, μ_eq:    np.sqrt(μ_eq/ε_eq)
-μ_eq = lambda μ_r:           scipy.constants.mu_0 * μ_r
-ε_eq = lambda ε_r, ω, σ:     ε_0 * ε_r * (1 - 1j*σ/(ω*ε_0))
-k    = lambda μ_eq, ε_eq:    ω * np.sqrt(μ_eq * ε_eq)
+ζ    = lambda ε_eq, μ_eq:    np.sqrt(μ_eq/ε_eq)                 # characteristic impedance [Ω]
+μ_eq = lambda μ_r:           scipy.constants.mu_0 * μ_r         # magnetic constant [H/m]
+ε_eq = lambda ε_r, ω, σ:     ε_0 * ε_r * (1 - 1j*σ/(ω*ε_0))     # electric constant [F/m]
+k    = lambda μ_eq, ε_eq:    ω * np.sqrt(μ_eq * ε_eq)           # wavenumber [1/m]
 
-λ    = lambda f, ε_eq, μ_eq: (1/np.sqrt(ε_eq*μ_eq))/f
-v    = lambda ε_eq, μ_eq:    (1/np.sqrt(ε_eq*μ_eq))
+v    = lambda ε_eq, μ_eq:    (1/np.sqrt(ε_eq*μ_eq))             # signal velocity [m/s]
+λ    = lambda f, ε_eq, μ_eq: (1/np.sqrt(ε_eq*μ_eq))/f           # wavelength [m]
+Γ    = lambda ζ_2, ζ_1:      (ζ_2-ζ_1)/(ζ_2+ζ_1)                # reflection coefficient
+
 
 ### ******************
 ###     data
@@ -71,14 +73,14 @@ print(f"σ/(ω*ε_0*ε_r_2) = {σ/(ω*ε_0*ε_r_2)}  ==> \033[92m{material_type}
 μ_eq_2 = μ_eq(μ_r_2)
 
 ζ_1 = ζ(ε_eq_1, μ_eq_1)
-ζ_2 = ζ(ε_eq_2, μ_eq_2)    # [ohm]
+ζ_2 = ζ(ε_eq_2, μ_eq_2)
 
 k_1 = k(μ_eq_1, ε_eq_1)
 k_2 = k(μ_eq_2, ε_eq_2)
 
 
-Γ_e = (ζ_2-ζ_1)/(ζ_2+ζ_1)
-τ_e   = 1 + Γ_e
+Γ_e = Γ(ζ_2, ζ_1)
+τ_e = 1 + Γ_e
 
 
 if material_type == 'conductor':
@@ -93,7 +95,7 @@ if material_type == 'conductor':
     print("*"*3)
 
 β =  k_2.real  # 
-α = -k_2.imag  # damping coefficient
+α = -k_2.imag  # damping coefficient   # k := β - j*α
 
 
 print(f"μ_eq_1 = {μ_eq_1}")
@@ -112,10 +114,13 @@ print(f"τ_e = {abs(τ_e)} ∠ {np.angle(τ_e)}")
 
 # 
 # breakpoint()
+#
+
 
 d_neg = -3*λ(f, ε_eq_1, μ_eq_1)
 
 try:
+    # δ is technically defined only if the material is a good conductor.
     δ = np.sqrt(2/(ω*μ_eq_2*σ))
     print(f"~delta~ = {δ}")
     d_pos = 5*δ + 0.1 * -d_neg/3  # 5 delta + 10 % λ_1
@@ -123,7 +128,7 @@ except RuntimeWarning:
     pass
 except ZeroDivisionError:
     d_pos = 3*λ(f, ε_eq_2, μ_eq_2)
-d_pos = d_pos.real
+d_pos = d_pos.real # just to make sure...
 
 
 
@@ -196,5 +201,3 @@ if __name__ == '__main__':
     # Writer = animation.writers['ffmpeg']
     # writer = Writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
     # anim.save('media/traveling_wave_1.mp4', writer=writer, dpi=200)
-
-
