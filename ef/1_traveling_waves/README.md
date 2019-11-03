@@ -1,3 +1,4 @@
+Simulation of electric field wave @ interface with a different medium
 
 ### Running
 
@@ -11,3 +12,7 @@ python traveling_wave_1.py
 
 
 ![Alt Text](./media/media1.gif)
+
+<br>
+
+![Alt Text](./media/media2.gif)

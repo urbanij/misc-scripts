@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Created on:   Sat Nov  2 11:32:55 CET 2019
+# Created on:   Sat Nov  2 21:12:21 CET 2019
 #
 # Author(s):    Francesco Urbani <https://urbanij.github.io>
 # Description:  Ex. Jan 27 201something
@@ -173,38 +173,27 @@ print(f"τ_e = {abs(τ_e):.4g} ∠ {np.angle(τ_e):.4g}")
 
 
 
-d_neg = -3*λ(f, ε_eq_1, μ_eq_1)   # show 3 wavelength before the discontinuity
-
-try:
-    # δ is technically defined only if the material is a good conductor.
-    δ = np.sqrt(2/(ω*μ_eq_2*σ_2))
-    print(f"~δ~ = {δ:.4g}")
-    d_pos = 5*δ + 0.1 * -d_neg/3  # 5 delta + 10 % λ_1
-except RuntimeWarning:
-    pass
-except ZeroDivisionError:
-    d_pos = 3*λ(f, ε_eq_2, μ_eq_2)
-d_pos = d_pos.real # just to make sure...
-
-
-
 λ_1   = λ(f, ε_eq_1, μ_eq_1)
 v_1   = v(ε_eq_1, μ_eq_1)
 print(f"λ_1 = {λ_1:.4g}")
 print(f"v_1 = {v_1:.4g}")
 
-
-t     = np.linspace(0, 2*λ_1/v_1, 80)
-z_neg = np.linspace(d_neg, 0, 400, endpoint=True)
-z_pos = np.linspace(0, d_pos, 400, endpoint=True)
+t     = np.linspace(-0.3e-9, 4e-9, 100)
+z_neg = np.linspace(-.5, 0, 400, endpoint=False)
+z_pos = np.linspace(0, .5, 400,  endpoint=False)
 z     = z_neg + z_pos
 
 
-E1_i   = lambda k, z, t: E_0 * np.exp(1j*k*z) * np.exp(1j*ω*t)
 
-e1_i   = lambda z, t: (      E1_i(k_1, -z, t)).real
-e1_r   = lambda z, t: (Γ_e * E1_i(k_1, +z, t)).real
-e2_t   = lambda z, t: (τ_e * E1_i(k_2, -z, t)).real
+
+# E1_i   = lambda k, z, t : E_0 * (np.heaviside(ω*t + k*(z+.3), 0) - np.heaviside(ω*t + k*(z+.1), 0))
+# gauss 
+std_dev = 10 # e.g.
+E1_i   = lambda k, z, t : E_0 * 1/np.sqrt(2*π*std_dev**2) * np.exp(-(ω*t + k*z)**2)/(2 * std_dev**2)
+
+e1_i   = lambda z, t: (      E1_i(k_1, -z, t)).real * np.heaviside(-z,0)    
+e1_r   = lambda z, t: (Γ_e * E1_i(k_1, +z, t)).real * np.heaviside(-z,0)
+e2_t   = lambda z, t: (τ_e * E1_i(k_2, -z, t)).real * np.heaviside(+z,0) 
 e1_tot = lambda z, t: e1_i(z,t) + e1_r(z, t)
 
 
@@ -217,6 +206,7 @@ print(f"S_t = {S_t:.4g} = {100*S_t/S_i:.4g}% S_i")
 
 
 E_max_over_E_min = lambda E_max, E_min : E_max/E_min
+
 
 
 if __name__ == '__main__':
@@ -242,9 +232,9 @@ if __name__ == '__main__':
             plt.ylabel('E [V/m]')
             plt.legend(loc='upper right')
             plt.grid(True)
-            e1_max_swing = 2*E_0 #max(abs(e1_i(z,0)) + abs(e1_r(z,0)))
-            plt.ylim([-e1_max_swing, e1_max_swing])
-            plt.xlim([d_neg, d_pos])
+            e1_max_swing = max(e1_i(0, t))
+            plt.ylim([-0.01, 0.01])
+            plt.xlim([min(z), max(z)])
 
         anim = animation.FuncAnimation(fig, animate, frames=40, interval=20)
 
@@ -255,3 +245,4 @@ if __name__ == '__main__':
             anim.save('media/traveling_wave_1.mp4', writer=writer, dpi=200)
         else:
             plt.show()
+
