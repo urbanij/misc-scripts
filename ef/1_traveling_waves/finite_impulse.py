@@ -43,9 +43,9 @@ E_0   = 10      # [V]
 ε_r_1 = 1
 μ_r_1 = 1
 σ_1   = 0       # [S/m]
-ε_r_2 = 1.5
+ε_r_2 = 1.15
 μ_r_2 = 1
-σ_2   = 0.12  # [S/m]
+σ_2   = 23  # [S/m]
 ### ******************
 
 try:
@@ -178,22 +178,38 @@ v_1   = v(ε_eq_1, μ_eq_1)
 print(f"λ_1 = {λ_1:.4g}")
 print(f"v_1 = {v_1:.4g}")
 
-t     = np.linspace(-0.3e-9, 4e-9, 100)
+
+
 z_neg = np.linspace(-.5, 0, 400, endpoint=False)
 z_pos = np.linspace(0, .5, 400,  endpoint=False)
 z     = z_neg + z_pos
+t     = np.linspace(-0.2e-9, 1.2e-9, 100)
+
+
+def cosine(k, z, t, A=E_0):
+    return E_0 * np.cos(ω*t + k*z)
+    # return A * np.exp(1j*k*z) 
+
+# def windowed_cosine(k, z):
+#     return cosine(k, z)
+
+def gaussian(k, z, t, rms=0.20, A=E_0):
+    return A * 1/np.sqrt(2*π*rms**2) * np.exp(-((ω*t + k*z)**2)/(2 * rms**2))
 
 
 
+### ****     Capitalized == phasor         ****
 
+ei = cosine
+# E1_i = cosine 
+# E1_i = windowed_cosine
 # E1_i   = lambda k, z, t : E_0 * (np.heaviside(ω*t + k*(z+.3), 0) - np.heaviside(ω*t + k*(z+.1), 0))
-# gauss 
-std_dev = 10 # e.g.
-E1_i   = lambda k, z, t : E_0 * 1/np.sqrt(2*π*std_dev**2) * np.exp(-(ω*t + k*z)**2)/(2 * std_dev**2)
 
-e1_i   = lambda z, t: (      E1_i(k_1, -z, t)).real * np.heaviside(-z,0)    
-e1_r   = lambda z, t: (Γ_e * E1_i(k_1, +z, t)).real * np.heaviside(-z,0)
-e2_t   = lambda z, t: (τ_e * E1_i(k_2, -z, t)).real * np.heaviside(+z,0) 
+
+
+e1_i   = lambda z, t: (      ei(k_1, -z, t))
+e1_r   = lambda z, t: (Γ_e * ei(k_1, +z, t))
+e2_t   = lambda z, t: (τ_e * ei(k_2, -z, t))
 e1_tot = lambda z, t: e1_i(z,t) + e1_r(z, t)
 
 
@@ -232,9 +248,12 @@ if __name__ == '__main__':
             plt.ylabel('E [V/m]')
             plt.legend(loc='upper right')
             plt.grid(True)
-            e1_max_swing = max(e1_i(0, t))
-            plt.ylim([-0.01, 0.01])
+            
+            plt.ylim([-2*E_0, 2*E_0])
             plt.xlim([min(z), max(z)])
+
+            print(i)
+            breakpoint()
 
         anim = animation.FuncAnimation(fig, animate, frames=40, interval=20)
 

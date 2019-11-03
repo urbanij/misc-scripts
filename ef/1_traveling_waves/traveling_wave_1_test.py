@@ -12,12 +12,14 @@
 import unittest
 
 from traveling_wave_1 import *
-
+from functions import *
 
 class TravelingWaveTest(unittest.TestCase):
-    def test_power_density(self):
-        self.assertGreater(S_i, S_t)
 
+    def test_gamma_tau(self):
+        self.assertEquals(1+gamma(2,5), tau(2,5))
+        self.assertEquals(1+gamma(-3,7), tau(-3,7))
+        
 
 
 if __name__ == "__main__":
