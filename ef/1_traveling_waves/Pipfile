@@ -11,6 +11,7 @@ matplotlib = "*"
 scipy = "*"
 tk = "*"
 pyqt5 = "*"
+cython = "*"
 
 [requires]
 python_version = "3.7"

@@ -200,7 +200,7 @@ def gaussian(k, z, t, rms=0.20, A=E_0):
 
 ### ****     Capitalized == phasor         ****
 
-ei = cosine
+ei = gaussian
 # E1_i = cosine 
 # E1_i = windowed_cosine
 # E1_i   = lambda k, z, t : E_0 * (np.heaviside(ω*t + k*(z+.3), 0) - np.heaviside(ω*t + k*(z+.1), 0))
@@ -253,7 +253,7 @@ if __name__ == '__main__':
             plt.xlim([min(z), max(z)])
 
             print(i)
-            breakpoint()
+            # breakpoint()
 
         anim = animation.FuncAnimation(fig, animate, frames=40, interval=20)
 
