@@ -45,7 +45,7 @@ cpdef zeta(complex epsilon_eq, float mu_eq):
 
 cpdef k(float mu_eq, complex epsilon_eq, float omega):   
     """
-    wavenumber [1/m]
+    propagation constant or wavenumber [1/m]
     """
     return omega * np.sqrt(mu_eq * epsilon_eq)           
 

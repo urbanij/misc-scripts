@@ -5,5 +5,7 @@ show_diff:
 	cython -a functions.pyx
 
 clean:
-	rm *.so
-	functions.html
+	rm -rf *.so
+	rm -rf functions.html
+	rm -rf build
+	rm -rf __pycache__

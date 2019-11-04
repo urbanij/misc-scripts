@@ -95,6 +95,14 @@ try:
 except Exception as e:
     print(f"Using default: σ_2 = {σ_2:.4g}")
 
+try:
+    _ = input("Insert wave: cosine / gaussian pulse ([c]/g)? ")
+    if _ != 'g': wave = "cosine"
+    else:        wave = "gaussian"
+except Exception as e:
+    print(f"Using default: cosine wave")
+    wave = "cosine"
+
 
 ### ******************
 ###    relations
@@ -106,13 +114,13 @@ except Exception as e:
 ### ******************
 ###    computations
 ### ******************
-
-material_type = 'Good conductor' if σ_2/(ω*ε_0*ε_r_2) >= 100                              else \
-                'Dielectric'     if σ_2/(ω*ε_0*ε_r_2) < 100 and σ_2/(ω*ε_0*ε_r_2 >= 0.01) else \
+U = σ_2/(ω*ε_0*ε_r_2)
+material_type = 'Good conductor' if (U >= 1e2)              else \
+                'Dielectric'     if (U < 1e2 and U >= 1e-2) else \
                 'Insulator'
 print()
 print("*"*20)
-print(f"σ_2/(ω*ε_0*ε_r_2) = {σ_2/(ω*ε_0*ε_r_2):.4g}  ==> medium 2 is a(n) \033[92m{material_type}\x1b[0m")
+print(f"σ_2/(ω*ε_0*ε_r_2) = {U:.4g}  ==> medium 2 is a(n) \033[92m{material_type}\x1b[0m")
 
 
 ε_eq_1 = epsilon_eq(ε_r_1, ω, σ_1)
@@ -143,8 +151,8 @@ if material_type == 'Good conductor':
     print(f"\tζ_2 = {(1/(σ_2*δ)):.4g}·(1+j)")
     print("*"*3)
 
-β =  k_2.real  # 
-α = -k_2.imag  # damping coefficient   # k := β - j*α
+β = k_2.real  # 
+α = k_2.imag  # damping coefficient   # k := β + j*α  , (α < 0)
 
 
 print(f"μ_eq_1 = {μ_eq_1:.4g}")
@@ -166,16 +174,16 @@ print(f"τ_e = {abs(τ_e):.4g} ∠ {np.angle(τ_e):.4g}")
 d_neg = -3*Lambda(f, ε_eq_1, μ_eq_1)   # show 3 wavelength before the discontinuity
 
 try:
-    # δ is technically defined only if the material is a good conductor.
-    δ = np.sqrt(2/(ω*μ_eq_2*σ_2))
-    print(f"~δ~ = {δ:.4g}")
+    δ = -1/α # skin depth
     d_pos = 5*δ + 0.1 * -d_neg/3  # 5 delta + 10 % λ_1
-except RuntimeWarning:
-    pass
-except ZeroDivisionError:
-    d_pos = 3*Lambda(f, ε_eq_2, μ_eq_2)
-d_pos = d_pos.real # just to make sure...
+except ZeroDivisionError as e:
+    print(e)
+else:
+    print(f"δ = {δ:.4g}")
+    if abs(δ) == np.inf:
+        d_pos = -d_neg  # λ_1
 
+d_pos = d_pos.real # just to make sure...
 
 
 λ_1   = Lambda(f, ε_eq_1, μ_eq_1)
@@ -184,28 +192,38 @@ print(f"λ_1 = {λ_1:.4g}")
 print(f"v_1 = {v_1:.4g}")
 
 
-t     = np.linspace(0, 2*λ_1/v_1, 80)
+
 z_neg = np.linspace(d_neg, 0, 400, endpoint=True)
 z_pos = np.linspace(0, d_pos, 400, endpoint=True)
 z     = z_neg + z_pos
 
 
+frames = 80
+t1    = np.linspace(0, λ_1/v_1, frames)
+t2    = np.linspace(-1e-9, 1.3e-9, frames)
+
+
 # E1_i   = lambda k, z, t: E_0 * np.exp(1j*k*z) * np.exp(1j*ω*t)
-def cosine(k, z, t):
+def cosine(k, z, t=t1):
     return E_0 * np.exp(1j*k*z) * np.exp(1j*ω*t)
 
-def gaussian(k, z, t, std_dev=10):
-    return E_0 * 1/np.sqrt(2*π*std_dev**2) * np.exp(-(ω*t + k*z)**2)/(2 * std_dev**2)
+
+def gaussian(k, z, t=t2, rms=1.20, A=E_0):
+    return A * 1/np.sqrt(2*π*rms**2) * np.exp(-((ω*t + k.real*z)**2)/(2 * rms**2)) * np.exp(-k.imag*z)
 
 
-E1_i = cosine
-# E1_i = gaussian
+if wave == 'cosine':
+    E1_i = cosine
+else:
+    E1_i = gaussian
+
+t = t2 if E1_i == gaussian else t1
+
 
 e1_i   = lambda z, t: (      E1_i(k_1, -z, t)).real 
 e1_r   = lambda z, t: (Γ_e * E1_i(k_1, +z, t)).real
 e2_t   = lambda z, t: (τ_e * E1_i(k_2, -z, t)).real
 e1_tot = lambda z, t: e1_i(z,t) + e1_r(z, t)
-
 
 
 S_i = 0.5 * 1/ζ_1 * abs(E_0)**2
@@ -243,11 +261,19 @@ if __name__ == '__main__':
             plt.ylabel('E [V/m]')
             plt.legend(loc='upper right')
             plt.grid(True)
-            e1_max_swing = 2*E_0 #max(abs(e1_i(z,0)) + abs(e1_r(z,0)))
-            plt.ylim([-e1_max_swing, e1_max_swing])
+            
+            # breakpoint()
+            if wave == "cosine":
+                peak_high=max(e1_tot(z, t[0]))
+                peak_low=-peak_high
+            else:
+                peak_high=max(e1_tot(z, t[0]))
+                peak_low=min(e1_tot(z, t[40]))
+            
+            plt.ylim([1.4*peak_low, 1.4*peak_high])
             plt.xlim([d_neg, d_pos])
 
-        anim = animation.FuncAnimation(fig, animate, frames=40, interval=20)
+        anim = animation.FuncAnimation(fig, animate, frames=frames, interval=20)
 
         if input("Want to save plot animation? (y/[n])? ") == 'y': 
             ### Save animation
@@ -256,3 +282,4 @@ if __name__ == '__main__':
             anim.save('media/traveling_wave_1.mp4', writer=writer, dpi=200)
         else:
             plt.show()
+
