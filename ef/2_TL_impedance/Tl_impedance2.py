@@ -16,8 +16,8 @@ from matplotlib.widgets import Slider  # import the Slider widget
  
 k = .71
  
-ZL_min  = 1e-3      # the minimial value of the paramater a
-ZL_max  = np.log(10_000)      # the maximal value of the paramater a
+ZL_min  = np.log(1e-1)      # the minimial value of the paramater a
+ZL_max  = np.log(1e4)      # the maximal value of the paramater a
 ZL_init = np.log(50)    # the value of the parameter a to be used initially, when the graph is created
  
 z = np.linspace(-10, 0, 5_000)
