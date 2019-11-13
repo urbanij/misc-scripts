@@ -4,6 +4,8 @@
 # Created on:   Sat Nov  2 11:32:55 CET 2019
 #
 # Author(s):    Francesco Urbani <https://urbanij.github.io>
+#
+# File          traveling_wave_1.py
 # Description:  Ex. Jan 27 201something
 # 
 # ==========================================================
@@ -13,115 +15,115 @@ from matplotlib import pyplot as plt
 import matplotlib.animation as animation
 import scipy.constants
 
-from functions import *
-# from functions_py import *
+# from functions import *
+from functions_py import *
 
 ### ******************
 ###     constants
 ### ******************
-π   = np.pi
+π = np.pi
 ε_0 = scipy.constants.epsilon_0
 ζ_0 = scipy.constants.physical_constants['characteristic impedance of vacuum'][0]
-
 
 ### ******************
 ###     data
 ### ******************
-f     = 1.8e9   # [Hz]
-E_0   = 10      # [V]
-ε_r_1 = 1
-μ_r_1 = 1
-σ_1   = 0       # [S/m]
-ε_r_2 = 1.5
-μ_r_2 = 1
-σ_2   = 0.12  # [S/m]
+f       = 1.8e9 # [Hz]
+E_0     = 10.0  # [V]
+ε_r_1   = 1.0
+μ_r_1   = 1.0
+σ_1     = 0.0   #[S/m]
+ε_r_2   = 1.5
+μ_r_2   = 1.0
+σ_2     = 0.12  # [S/m]
+wave    = 'cos'
 ### ******************
 
+if __name__ == '__main__':
 
-try:
-    while 1:
-        _ = float(input(f"Insert f [Hz]: (or enter to use default value {f:.4g}) "))
-        if _ > 0: f = _; break
-except Exception as e:
-    print(f"Using default: f = {f:.4g}")
-except UnboundLocalError: pass
+    try:
+        while 1:
+            if float(input(f"Insert f [Hz]: (or enter to use default value {f:.4g}) ")) > 0.0:
+                f = float(input(f"Insert f [Hz]: (or enter to use default value {f:.4g})"))
+    except Exception as e:
+        print(f"Using default: f = {f:.4g}")
+    except UnboundLocalError:
+        pass
 
-try:
-    while 1:
-        _ = float(input(f"Insert E_0 [V]: (or enter to use default value {E_0:.4g}) "))
-        if _ > 0: E_0 = _; break
-except Exception as e:
-    print(f"Using default: E_0 = {E_0:.4g}")
+    try:
+        while 1:
+            if float(input(f"Insert E_0 [V]: (or enter to use default value {E_0:.4g}) ")) > 0.0: 
+                E_0 = float(input(f"Insert E_0 [V]: (or enter to use default value {E_0:.4g}) "))
+    except Exception as e:
+        print(f"Using default: E_0 = {E_0:.4g}")
 
-try:
-    while 1:
-        _ = float(input(f"Insert ε_r_1: (or enter to use default value {ε_r_1:.4g}) "))
-        if _ >= 1: ε_r_1 = _; break
-except Exception as e:
-    print(f"Using default: ε_r_1 = {ε_r_1:.4g}")
+    try:
+        while 1:
+            if float(input(f"Insert ε_r_1: (or enter to use default value {ε_r_1:.4g}) ")) >= 1.0: 
+                ε_r_1 = float(input(f"Insert ε_r_1: (or enter to use default value {ε_r_1:.4g}) "))
+    except Exception as e:
+        print(f"Using default: ε_r_1 = {ε_r_1:.4g}")
 
-try:
-    while 1:
-        _ = float(input(f"Insert μ_r_1: (or enter to use default value {μ_r_1:.4g}) "))
-        if _ >= 1: μ_r_1 = _; break
-except Exception as e:
-    print(f"Using default: μ_r_1 = {μ_r_1:.4g}")
+    try:
+        while 1:
+            if float(input(f"Insert μ_r_1: (or enter to use default value {μ_r_1:.4g}) ")) >= 1.0: 
+                μ_r_1 = float(input(f"Insert μ_r_1: (or enter to use default value {μ_r_1:.4g}) "))
+    except Exception as e:
+        print(f"Using default: μ_r_1 = {μ_r_1:.4g}")
 
-try:
-    while 1:
-        _ = float(input(f"Insert σ_1: (or enter to use default value {σ_1:.4g}) "))
-        if _ >= 0: σ_1 = _; break
-except Exception as e:
-    print(f"Using default: σ_1 = {σ_1:.4g}")
+    try:
+        while 1:
+            if float(input(f"Insert σ_1: (or enter to use default value {σ_1:.4g}) ")) >= 0.0: 
+                σ_1 = float(input(f"Insert σ_1: (or enter to use default value {σ_1:.4g}) "))
+    except Exception as e:
+        print(f"Using default: σ_1 = {σ_1:.4g}")
 
-try:
-    while 1:
-        _ = float(input(f"Insert ε_r_2: (or enter to use default value {ε_r_2:.4g}) "))
-        if _ >= 1: ε_r_2 = _; break
-except Exception as e:
-    print(f"Using default: ε_r_2 = {ε_r_2:.4g}")
+    try:
+        while 1:
+            if float(input(f"Insert ε_r_2: (or enter to use default value {ε_r_2:.4g}) ")) >= 1.0: 
+                ε_r_2 = float(input(f"Insert ε_r_2: (or enter to use default value {ε_r_2:.4g}) "))
+    except Exception as e:
+        print(f"Using default: ε_r_2 = {ε_r_2:.4g}")
 
-try:
-    while 1:
-        _ = float(input(f"Insert μ_r_2: (or enter to use default value {μ_r_2:.4g}) "))
-        if _ >= 1: μ_r_2 = _; break
-except Exception as e:
-    print(f"Using default: μ_r_2 = {μ_r_2:.4g}")
+    try:
+        while 1:
+            if float(input(f"Insert μ_r_2: (or enter to use default value {μ_r_2:.4g}) ")) >= 1.0: 
+                μ_r_2 = float(input(f"Insert μ_r_2: (or enter to use default value {μ_r_2:.4g}) "))
+    except Exception as e:
+        print(f"Using default: μ_r_2 = {μ_r_2:.4g}")
 
-try:
-    while 1:
-        _ = float(input(f"Insert σ_2: (or enter to use default value {σ_2:.4g}) "))
-        if _ >= 0: σ_2 = _; break
-except Exception as e:
-    print(f"Using default: σ_2 = {σ_2:.4g}")
+    try:
+        while 1:
+            if float(input(f"Insert σ_2: (or enter to use default value {σ_2:.4g}) ")) >= 0.0: 
+                σ_2 = float(input(f"Insert σ_2: (or enter to use default value {σ_2:.4g}) "))
+    except Exception as e:
+        print(f"Using default: σ_2 = {σ_2:.4g}")
 
-try:
-    _ = input("Insert wave: cosine / gaussian pulse ([c]/g)? ")
-    if _ != 'g': wave = "cosine"
-    else:        wave = "gaussian"
-except Exception as e:
-    print(f"Using default: cosine wave")
-    wave = "cosine"
-
+    try:
+        _ = input("Insert wave: cosine / gaussian pulse ([c]/g)? ")
+        if _ != 'g':
+            wave = "cos"
+        else:
+            wave = "gaussian"
+    except Exception as e:
+        print(f"Using default: {wave}")
 
 ### ******************
 ###    relations
 ### ******************
 
-ω = 2*π*f   # [rad/s]
-
+ω = 2 * π * f  # [rad/s]
 
 ### ******************
 ###    computations
 ### ******************
-U = σ_2/(ω*ε_0*ε_r_2)
-material_type = 'Good conductor' if (U >= 1e2)              else \
-                'Dielectric'     if (U < 1e2 and U >= 1e-2) else \
-                'Insulator'
-print()
-print("*"*20)
-print(f"σ_2/(ω*ε_0*ε_r_2) = {U:.4g}  ==> medium 2 is a(n) \033[92m{material_type}\x1b[0m")
+U = σ_2 / (ω * ε_0 * ε_r_2)
+material_type = 'Good conductor' if (U >= 1e2) else \
+    'Dielectric' if (U < 1e2 and U >= 1e-2) else \
+        'Insulator'
 
+print()
+print(f"σ_2/(ω*ε_0*ε_r_2) = {U:.4g}  ==> medium 2 is a(n) \033[92m{material_type}\x1b[0m")
 
 ε_eq_1 = epsilon_eq(ε_r_1, ω, σ_1)
 ε_eq_2 = epsilon_eq(ε_r_2, ω, σ_2)
@@ -134,7 +136,6 @@ print(f"σ_2/(ω*ε_0*ε_r_2) = {U:.4g}  ==> medium 2 is a(n) \033[92m{material_
 
 k_1 = k(μ_eq_1, ε_eq_1, ω)
 k_2 = k(μ_eq_2, ε_eq_2, ω)
-
 
 Γ_e = gamma(ζ_2, ζ_1)
 τ_e = 1 + Γ_e
@@ -166,8 +167,8 @@ print(f"ζ_2 = ζ_0·({ζ_2/ζ_0:.4g}) = {ζ_2:.4g}")
 print(f"k_1 = {k_1:.4g}")
 print(f"k_2 = {k_2:.4g}")
 
-print(f"Γ_e = {abs(Γ_e):.4g} ∠ {np.angle(Γ_e):.4g}")
-print(f"τ_e = {abs(τ_e):.4g} ∠ {np.angle(τ_e):.4g}")
+print(f"Γ_e = {Γ_e:.4g} = {abs(Γ_e):.4g} ∠ {np.angle(Γ_e):.4g}")
+print(f"τ_e = {τ_e:.4g} = {abs(τ_e):.4g} ∠ {np.angle(τ_e):.4g}")
 
 
 
@@ -201,23 +202,28 @@ z     = z_neg + z_pos
 frames = 80
 t1    = np.linspace(0, λ_1/v_1, frames)
 t2    = np.linspace(-1e-9, 1.3e-9, frames)
+t3    = np.linspace(-2e-9, 2e-9, frames)
 
 
 # E1_i   = lambda k, z, t: E_0 * np.exp(1j*k*z) * np.exp(1j*ω*t)
-def cosine(k, z, t=t1):
-    return E_0 * np.exp(1j*k*z) * np.exp(1j*ω*t)
+def cosine(k, z, t):
+    return  E_0 * np.exp(1j*k*z) * np.exp(1j*ω*t)
 
+def windowed_cosine(k, z, t):
+    window = 3
+    return  cosine(k, z, t) * (np.heaviside(ω*t + k.real*z+window,1e-6) - np.heaviside(ω*t + k.real*z-window, 1e-6))
 
-def gaussian(k, z, t=t2, rms=1.20, A=E_0):
+def gaussian(k, z, t, rms=1.20, A=E_0):
     return A * 1/np.sqrt(2*π*rms**2) * np.exp(-((ω*t + k.real*z)**2)/(2 * rms**2)) * np.exp(-k.imag*z)
 
+def rect(k, z, t):
+    window = 3
+    return (np.heaviside(ω*t + k.real*z+window,1e-6) - np.heaviside(ω*t + k.real*z-window, 1e-6)) * np.exp(-k.imag*z)
 
-if wave == 'cosine':
-    E1_i = cosine
-else:
-    E1_i = gaussian
 
-t = t2 if E1_i == gaussian else t1
+
+E1_i = cosine
+t = t2 if E1_i == gaussian else t3 if E1_i == windowed_cosine else t1
 
 
 e1_i   = lambda z, t: (      E1_i(k_1, -z, t)).real 
@@ -263,17 +269,20 @@ if __name__ == '__main__':
             plt.grid(True)
             
             # breakpoint()
-            if wave == "cosine":
-                peak_high=max(e1_tot(z, t[0]))
-                peak_low=-peak_high
-            else:
-                peak_high=max(e1_tot(z, t[0]))
-                peak_low=min(e1_tot(z, t[40]))
+            # if wave == "gaussian":
+            #     peak_high=max(e1_tot(z, t[0]))
+            #     peak_low=min(e1_tot(z, t[40]))
+            # else:
+            #     peak_high=max(e1_tot(z, t[0]))
+            #     peak_low=-peak_high
             
-            plt.ylim([1.4*peak_low, 1.4*peak_high])
+            peak_high = E_0
+            peak_low = -E_0
+
+            plt.ylim([1.6*peak_low, 1.6*peak_high])
             plt.xlim([d_neg, d_pos])
 
-        anim = animation.FuncAnimation(fig, animate, frames=frames, interval=20)
+        anim = animation.FuncAnimation(fig, animate, frames=frames, interval=10)
 
         if input("Want to save plot animation? (y/[n])? ") == 'y': 
             ### Save animation

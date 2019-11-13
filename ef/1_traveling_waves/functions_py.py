@@ -5,7 +5,7 @@
 #
 # Author(s):    Francesco Urbani <https://urbanij.github.io>
 #
-# File          functions.py
+# File          functions_py.py
 # Description:  Ex. Jan 27 201something
 # 
 #
@@ -24,8 +24,8 @@ def epsilon_eq(epsilon_r, omega, sigma):
     Parameters
     ----------
     epsilon_r : integer > 1 
-    omega   : angular frequency [rad/s]
-    sigma   : conductivity [S/m]
+    omega     : angular frequency   [rad/s]
+    sigma     : conductivity        [S/m]
     Returns
     """
     return epsilon_0 * epsilon_r * (1 + sigma/(1j*omega*epsilon_0*epsilon_r)) 

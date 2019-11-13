@@ -5,7 +5,7 @@
 #
 # Author(s):    Francesco Urbani <https://urbanij.github.io>
 #
-# Description:  Empty unit test for traveling_wave_1.py
+# Description:  Unit test for traveling_wave_1.py
 # 
 # ==========================================================
 
@@ -20,6 +20,8 @@ class TravelingWaveTest(unittest.TestCase):
         self.assertEquals(1+gamma(2,5), tau(2,5))
         self.assertEquals(1+gamma(-3,7), tau(-3,7))
         
+    def boundary_condition(self):
+            self.assertEqual(e1_tot(0, t[0], e2_t(0, t[0])))
 
 
 if __name__ == "__main__":

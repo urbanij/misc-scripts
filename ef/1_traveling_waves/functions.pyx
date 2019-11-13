@@ -5,7 +5,7 @@
 #
 # Author(s):    Francesco Urbani <https://urbanij.github.io>
 #
-# File          functions.py
+# File          functions.pyx (cython)
 # Description:  Ex. Jan 27 201something
 # 
 #

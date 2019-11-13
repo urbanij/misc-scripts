@@ -13,7 +13,7 @@ python traveling_wave_1.py
 example:
 
 ```sh
-python3.7 traveling_wave_1.py
+$ python3.7 traveling_wave_1.py
 Insert f [Hz]: (or enter to use default value 1.8e+09) 2e9
 Insert E_0 [V]: (or enter to use default value 10)
 Using default: E_0 = 10
