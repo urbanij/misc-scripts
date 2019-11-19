@@ -5,7 +5,7 @@
 #
 # Author(s):    Francesco Urbani <https://urbanij.github.io>
 #
-# File          traveling_wave_1.py
+# File          wave.py
 # Description:  Ex. Jan 27 201something
 # 
 # ==========================================================
@@ -36,77 +36,75 @@ E_0     = 10.0  # [V]
 ε_r_2   = 1.5
 μ_r_2   = 1.0
 σ_2     = 0.12  # [S/m]
-wave    = 'cos'
+wave    = 'cosine'
 ### ******************
 
 if __name__ == '__main__':
-
     try:
         while 1:
-            if float(input(f"Insert f [Hz]: (or enter to use default value {f:.4g}) ")) > 0.0:
-                f = float(input(f"Insert f [Hz]: (or enter to use default value {f:.4g})"))
+            _ = float(input(f"Insert f [Hz]: (or enter to use default value {f:.4g}) "))
+            if _ > 0: f = _; break
     except Exception as e:
         print(f"Using default: f = {f:.4g}")
-    except UnboundLocalError:
-        pass
+    except UnboundLocalError: pass
 
     try:
         while 1:
-            if float(input(f"Insert E_0 [V]: (or enter to use default value {E_0:.4g}) ")) > 0.0: 
-                E_0 = float(input(f"Insert E_0 [V]: (or enter to use default value {E_0:.4g}) "))
+            _ = float(input(f"Insert E_0 [V]: (or enter to use default value {E_0:.4g}) "))
+            if _ > 0: E_0 = _; break
     except Exception as e:
         print(f"Using default: E_0 = {E_0:.4g}")
 
     try:
         while 1:
-            if float(input(f"Insert ε_r_1: (or enter to use default value {ε_r_1:.4g}) ")) >= 1.0: 
-                ε_r_1 = float(input(f"Insert ε_r_1: (or enter to use default value {ε_r_1:.4g}) "))
+            _ = float(input(f"Insert ε_r_1: (or enter to use default value {ε_r_1:.4g}) "))
+            if _ >= 1: ε_r_1 = _; break
     except Exception as e:
         print(f"Using default: ε_r_1 = {ε_r_1:.4g}")
 
     try:
         while 1:
-            if float(input(f"Insert μ_r_1: (or enter to use default value {μ_r_1:.4g}) ")) >= 1.0: 
-                μ_r_1 = float(input(f"Insert μ_r_1: (or enter to use default value {μ_r_1:.4g}) "))
+            _ = float(input(f"Insert μ_r_1: (or enter to use default value {μ_r_1:.4g}) "))
+            if _ >= 1: μ_r_1 = _; break
     except Exception as e:
         print(f"Using default: μ_r_1 = {μ_r_1:.4g}")
 
     try:
         while 1:
-            if float(input(f"Insert σ_1: (or enter to use default value {σ_1:.4g}) ")) >= 0.0: 
-                σ_1 = float(input(f"Insert σ_1: (or enter to use default value {σ_1:.4g}) "))
+            _ = float(input(f"Insert σ_1: (or enter to use default value {σ_1:.4g}) "))
+            if _ >= 0: σ_1 = _; break
     except Exception as e:
         print(f"Using default: σ_1 = {σ_1:.4g}")
 
     try:
         while 1:
-            if float(input(f"Insert ε_r_2: (or enter to use default value {ε_r_2:.4g}) ")) >= 1.0: 
-                ε_r_2 = float(input(f"Insert ε_r_2: (or enter to use default value {ε_r_2:.4g}) "))
+            _ = float(input(f"Insert ε_r_2: (or enter to use default value {ε_r_2:.4g}) "))
+            if _ >= 1: ε_r_2 = _; break
     except Exception as e:
         print(f"Using default: ε_r_2 = {ε_r_2:.4g}")
 
     try:
         while 1:
-            if float(input(f"Insert μ_r_2: (or enter to use default value {μ_r_2:.4g}) ")) >= 1.0: 
-                μ_r_2 = float(input(f"Insert μ_r_2: (or enter to use default value {μ_r_2:.4g}) "))
+            _ = float(input(f"Insert μ_r_2: (or enter to use default value {μ_r_2:.4g}) "))
+            if _ >= 1: μ_r_2 = _; break
     except Exception as e:
         print(f"Using default: μ_r_2 = {μ_r_2:.4g}")
 
     try:
         while 1:
-            if float(input(f"Insert σ_2: (or enter to use default value {σ_2:.4g}) ")) >= 0.0: 
-                σ_2 = float(input(f"Insert σ_2: (or enter to use default value {σ_2:.4g}) "))
+            _ = float(input(f"Insert σ_2: (or enter to use default value {σ_2:.4g}) "))
+            if _ >= 0: σ_2 = _; break
     except Exception as e:
         print(f"Using default: σ_2 = {σ_2:.4g}")
 
     try:
-        _ = input("Insert wave: cosine / gaussian pulse ([c]/g)? ")
-        if _ != 'g':
-            wave = "cos"
-        else:
-            wave = "gaussian"
+        _ = input("Insert wave: cosine / gaussian / rectangular pulse ([c]/g/r)? ")
+        if   _ == 'c': wave = "cosine"
+        elif _ == 'g': wave = "gaussian"
+        elif _ == 'r': wave = "rect"
     except Exception as e:
-        print(f"Using default: {wave}")
+        print(f"Using default: cosine wave")
+        wave = "cosine"
 
 ### ******************
 ###    relations
@@ -122,7 +120,7 @@ material_type = 'Good conductor' if (U >= 1e2) else \
     'Dielectric' if (U < 1e2 and U >= 1e-2) else \
         'Insulator'
 
-print()
+print("*"*20)
 print(f"σ_2/(ω*ε_0*ε_r_2) = {U:.4g}  ==> medium 2 is a(n) \033[92m{material_type}\x1b[0m")
 
 ε_eq_1 = epsilon_eq(ε_r_1, ω, σ_1)
@@ -221,9 +219,16 @@ def rect(k, z, t):
     return (np.heaviside(ω*t + k.real*z+window,1e-6) - np.heaviside(ω*t + k.real*z-window, 1e-6)) * np.exp(-k.imag*z)
 
 
+if wave == 'cosine':
+    E1_i = cosine
+elif wave == 'gaussian':
+    E1_i = gaussian
+elif wave == 'rect':
+    E1_i = rect
+else:
+    raise Exception("Invalid wave")
 
-E1_i = cosine
-t = t2 if E1_i == gaussian else t3 if E1_i == windowed_cosine else t1
+t = t2 if E1_i == gaussian else t3 if E1_i == rect else t1
 
 
 e1_i   = lambda z, t: (      E1_i(k_1, -z, t)).real 
@@ -258,26 +263,26 @@ if __name__ == '__main__':
                 "\nmedium 1: z<0, $\epsilon_r$=" + str(ε_r_1) + ", $\mu_r$=" + str(μ_r_1) + ", $\sigma$ =" + str(σ_1) + \
                 "\nmedium 2: z>0, $\epsilon_r$=" + str(ε_r_2) + ", $\mu_r$=" + str(μ_r_2) + ", $\sigma$ =" + str(σ_2)
             )
-            plt.plot(z_neg, e1_i(z_neg, t[i]),   "--", color='blue',   label='$e_1^i(z,t)|_{z=z_0}$',     linewidth=1)
-            plt.plot(z_neg, e1_r(z_neg, t[i]),   "-.", color='red',    label='$e_1^r(z,t)|_{z=z_0}$',     linewidth=1)
-            plt.plot(z_neg, e1_tot(z_neg, t[i]), "-",  color='green',  label='$e_1^{tot}(z,t)|_{z=z_0}$', linewidth=1)
-            plt.plot(z_pos, e2_t(z_pos, t[i]),   "-",  color='orange', label='$e_2^t(z,t)|_{z=z_0}$',     linewidth=1)
+            plt.plot(z_neg, e1_i(z_neg, t[i]),   "--", color='blue',   label='$e_1^i(z,t)$',     linewidth=1)
+            plt.plot(z_neg, e1_r(z_neg, t[i]),   "-.", color='red',    label='$e_1^r(z,t)$',     linewidth=1)
+            plt.plot(z_neg, e1_tot(z_neg, t[i]), "-",  color='green',  label='$e_1^{tot}(z,t)$', linewidth=1.5)
+            plt.plot(z_pos, e2_t(z_pos, t[i]),   "-",  color='orange', label='$e_2^t(z,t)$',     linewidth=1.5)
             
             plt.xlabel('space (z)')
             plt.ylabel('E [V/m]')
             plt.legend(loc='upper right')
             plt.grid(True)
             
-            # breakpoint()
-            # if wave == "gaussian":
-            #     peak_high=max(e1_tot(z, t[0]))
-            #     peak_low=min(e1_tot(z, t[40]))
-            # else:
-            #     peak_high=max(e1_tot(z, t[0]))
-            #     peak_low=-peak_high
             
-            peak_high = E_0
-            peak_low = -E_0
+            if wave == "gaussian":
+                peak_high=max(e1_tot(z, t[0]))
+                peak_low=min(e1_tot(z, t[40]))
+            elif wave == "cosine":
+                peak_high=max(e1_tot(z, t[0]))
+                peak_low=-peak_high
+            else:
+                peak_high=max(e1_tot(z, t[2]))
+                peak_low=min(e1_tot(z, t[40]))
 
             plt.ylim([1.6*peak_low, 1.6*peak_high])
             plt.xlim([d_neg, d_pos])
@@ -291,4 +296,3 @@ if __name__ == '__main__':
             anim.save('media/traveling_wave_1.mp4', writer=writer, dpi=200)
         else:
             plt.show()
-

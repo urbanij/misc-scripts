@@ -11,7 +11,7 @@
 
 import unittest
 
-from traveling_wave_1 import *
+from wave import *
 from functions import *
 
 class TravelingWaveTest(unittest.TestCase):
