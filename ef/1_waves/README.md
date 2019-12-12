@@ -16,47 +16,50 @@ Simulation of electric field wave @ interface with a different medium
 ```sh
 pipenv shell
 pipenv sync
-python wave.py
 ```
 
-example:
+Python interactive shell example:
+```python
+>>> from wave import *
 
-```sh
-$ python wave.py
+>>> f_0 = 1.8e9 # [Hz]
 
-Insert f [Hz]: (or enter to use default value 1.8e+09) 2e9
-Insert E_0 [V]: (or enter to use default value 10) 8
-Insert ε_r_1: (or enter to use default value 1)
-Using default: ε_r_1 = 1
-Insert μ_r_1: (or enter to use default value 1)
-Using default: μ_r_1 = 1
-Insert σ_1: (or enter to use default value 0)
-Using default: σ_1 = 0
-Insert ε_r_2: (or enter to use default value 1.5) 1.54
-Insert μ_r_2: (or enter to use default value 1)
-Using default: μ_r_2 = 1
-Insert σ_2: (or enter to use default value 0.12) 0.16
-Insert wave: cosine / gaussian / rectangular pulse ([c]/g/r)?
+>>> E_0 = 10.0  # [V]
 
-********************
+>>> free_space = Medium(ε_r=1, μ_r=1, σ=0)
 
-σ_2/(ω*ε_0*ε_r_2) = 0.9338  ==> medium 2 is a(n) Dielectric
+>>> medium2 = Medium(ε_r=5, μ_r=3, σ=.04)
+
+>>> wave = Sine(f=f_0, A=E_0)
+
+>>> wave.add_mediums(medium1=free_space, medium2=medium2)
+
+>>> wave.show()
+Save plot animation? (y/[n])? n
+
+>>> wave.print_data()
+
+U_1 := σ_1/(ω*ε_0*ε_r_1) = 0  ==> medium 1 is an Insulator
+U_2 := σ_2/(ω*ε_0*ε_r_2) = 7.074e-13  ==> medium 2 is an Insulator
 μ_eq_1 = 1.257e-06
-μ_eq_2 = 1.257e-06
-ε_eq_1 = 8.854e-12+0j
-ε_eq_2 = 1.364e-11-1.273e-11j
-ζ_1 = 376.7+0j
-ζ_2 = ζ_0·(0.6409+0.2527j) = 241.4+95.2j
-k_1 = 41.92+0j
-k_2 = 56.6-22.32j
-Γ_e = -0.1906+0.1834j = 0.2645 ∠ 2.376
-τ_e = 0.8094+0.1834j = 0.8299 ∠ 0.2228
-δ = 0.04481
-λ_1 = 0.1499
-v_1 = 2.998e+08
-S_i = 0.08494+0j
-S_t = 0.079+0j = 93+0j% S_i
-Want to plot? ([y]/n)?
-Want to save plot animation? (y/[n])? y
+μ_eq_2 = 3.77e-06
+ε_eq_1 = 8.854e-12
+ε_eq_2 = 4.427e-11-3.537e-12j
+ζ_eq_1 = 376.7
+ζ_eq_2 = 291.1+11.61j
+k_1 = 37.73
+k_2 = 146.2-5.832j
+Γ_e = -0.1278+0.01961j = 0.1293 ∠ 2.989
+τ_e = 0.8722+0.01961j = 0.8724 ∠ 0.02248
+δ = 0.1715
+S_i = 0.1327
+S_t = 0.1305 = 98.33% S_i
+
+>>> 
+```
+
+or just run:
+```sh
+python main.py
 ```
 
