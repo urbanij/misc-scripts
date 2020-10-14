@@ -16,7 +16,7 @@ from wave import Medium, Sine, Gaussian, Rect
 if __name__ == '__main__':
 
     f_0     = 1.8e9 # [Hz]
-    E_0     = 10.0  # [V]
+    E_0     = 10.0  # [V/m]
 
     free_space = Medium(ε_r=1, μ_r=1, σ=0)
 
